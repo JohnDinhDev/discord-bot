@@ -31,6 +31,10 @@ export default class Commands {
       }
     }
 
+    private test = async () => {
+      this.msg.reply('Yo bro')
+    }
+
     private help = async (): Promise<void> => {
       // If user input command is invalid
       if ((this.command || '') in this === false) {
