@@ -34,7 +34,7 @@ export default class Embed {
 
         for (const command of Object.keys(Commands)) {
             message.push(
-                `\`${process.env.PREFIX + command}\` - ${
+                `\`${process.env.PREFIX + command + " "}\` - ${
                     (Commands as Keyable)[command]
                 }`
             );
