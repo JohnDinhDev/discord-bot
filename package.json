@@ -10,7 +10,8 @@
     "start": "tsc & node dist/index.js"
   },
   "dependencies": {
-    "discord.js": "^12.4.1"
+    "discord.js": "^12.4.1",
+    "puppeteer": "^7.1.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.31",
