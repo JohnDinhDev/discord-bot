@@ -1,6 +1,8 @@
 // Definitions
 import { Msg, Keyable } from '../definitions/interfaces'
 
+import { generateLineBreaks } from '../utils'
+
 // Views
 import Message from '../views/Message'
 import Embed from '../views/Embed'
@@ -32,7 +34,14 @@ export default class Commands {
     }
 
     private test = async () => {
-      this.msg.reply('Yo bro')
+      const myArrOfStrings = [
+        'Hello',
+        'World',
+        'From',
+        'Cheggie'
+      ]
+
+      this.msg.send(generateLineBreaks(myArrOfStrings))
     }
 
     private help = async (): Promise<void> => {
