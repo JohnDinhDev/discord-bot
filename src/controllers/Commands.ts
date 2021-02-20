@@ -2,6 +2,7 @@
 import { Msg, Keyable } from '../definitions/interfaces'
 
 import { generateLineBreaks } from '../utils'
+import Chegg from './Chegg'
 
 // Views
 import Message from '../views/Message'
@@ -33,15 +34,16 @@ export default class Commands {
       }
     }
 
-    private test = async () => {
-      const myArrOfStrings = [
-        'Hello',
-        'World',
-        'From',
-        'Cheggie'
-      ]
+    // -c search your string here
+    private search = async () => {
+      const chegg = new Chegg()
+      const searchStr = this.args.join(' ')
 
-      this.msg.send(generateLineBreaks(myArrOfStrings))
+      // Run the Chegg.search method, located in src/controllers/Chegg.ts
+      chegg.search(searchStr)
+
+      // Cheggie bot sends this message
+      this.msg.send(`You searched \`${searchStr}\``)
     }
 
     private help = async (): Promise<void> => {
