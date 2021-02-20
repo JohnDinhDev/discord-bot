@@ -1,6 +1,9 @@
 // Definitions
 import { Msg, Keyable } from '../definitions/interfaces'
 
+import { generateLineBreaks } from '../utils'
+import Chegg from './Chegg'
+
 // Views
 import Message from '../views/Message'
 import Embed from '../views/Embed'
@@ -31,8 +34,16 @@ export default class Commands {
       }
     }
 
-    private test = async () => {
-      this.msg.reply('Yo bro')
+    // -c search your string here
+    private search = async () => {
+      const chegg = new Chegg()
+      const searchStr = this.args.join(' ')
+
+      // Run the Chegg.search method, located in src/controllers/Chegg.ts
+      chegg.search(searchStr)
+
+      // Cheggie bot sends this message
+      this.msg.send(`You searched \`${searchStr}\``)
     }
 
     private help = async (): Promise<void> => {
