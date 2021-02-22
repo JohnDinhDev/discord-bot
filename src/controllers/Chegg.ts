@@ -20,8 +20,7 @@ export default class Chegg {
 
             // Add a new header for navigation request
             const headers = request.headers();
-            headers["User-Agent"] =
-                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36";
+            headers["User-Agent"] = process.env.USER_AGENT;
             request.continue({ headers });
         });
 
@@ -52,6 +51,6 @@ export default class Chegg {
 
         // TODO: get the question text
 
-        await this.browser.close();
+        //await this.browser.close();
     };
 }
