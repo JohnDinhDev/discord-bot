@@ -1,61 +1,70 @@
-import puppeteer from 'puppeteer'
+import { Browser, Page, ElementHandle } from 'puppeteer'
+
 export default class Chegg {
-    search = async (searchStr: string) => {
-      // launch physical browser
-      const browser = await puppeteer.launch({
-        headless: false
-      })
+  browser: Browser
+  page: Page
 
-      // open a new tab in phyical browser
-      const page = await browser.newPage()
+  constructor(browser: Browser, page: Page) {
+    this.browser = browser
+    this.page = page
+  }
 
-      // intercept page request and insert 'human like' headers
-      await page.setRequestInterception(true)
+  static $ = async (
+    page: Page,
+    selectors: Array<string>
+  ): Promise<ElementHandle | null> => {
+    for (let selector of selectors) {
+      const foundElement = await page.$(selector)
+      if (foundElement) {
+        return foundElement
+      }
+    }
 
-      page.on('request', (request) => {
-        // Do nothing in case of non-navigation requests.
-        if (!request.isNavigationRequest()) {
-          request.continue()
-          return
-        }
+    return null
+  }
 
-        // Add a new header for navigation request
-        const headers = request.headers()
-        // Header for Chrome on Windows
-        // Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36
-        headers['User-Agent'] =
-                // This is a header for Chrome on Linux
-                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36'
-        request.continue({ headers })
-      })
+  $ = async (selectors: Array<string>) => {
+    return Chegg.$(this.page, selectors)
+  }
 
-      // go to chegg's website
-      await page.goto(
-        'https://www.chegg.com/homework-help/questions-and-answers',
-        {
-          waitUntil: 'networkidle2'
-        }
-      )
+  static clearInputEl = async (inputEl: ElementHandle): Promise<void> => {
+    await inputEl.click({ clickCount: 3 })
+    await inputEl.press('Backspace')
+  }
 
-      // timout for 3 seconds
-      await page.waitForTimeout(3000)
+  clearInputEl = async (inputEl: ElementHandle) => {
+    await Chegg.clearInputEl(inputEl)
+  }
 
-      // find an input element on the page with the name "homeworkhelp_search"
-      await page.$eval(
-        'input[name=homeworkhelp_search]',
-        // after it finds this element, enter 'hello world' into the search bar
-        // @ts-ignore
-        (el) => (el.value = 'hello world')
-      )
+  search = async (searchStr: string) => {
+    const searchBarElSelectors = [
+      'input#chegg-searchbox',
+      'input#autosuggest-input',
+      'input#chegg-header-search',
+    ]
+    const searchSubmitElSelectors = [
+      'a[title="autosuggest search button"]',
+      'button[data-test="chegg-searchbox_submit_btn"]',
+      'button[data-test="chegg-header-search_submit_btn"]',
+    ]
 
-      // clicks the search button to submit the search
-      await page.click('a[title="autosuggest search button"]')
+    const searchBarEl = await this.$(searchBarElSelectors)
+    const searchSubmitEl = await this.$(searchSubmitElSelectors)
 
-      // waits 3 seconds again for page to load
-      await page.waitForTimeout(3000)
+    await this.clearInputEl(searchBarEl!)
+    await searchBarEl?.type(searchStr, { delay: 100 })
+    await searchSubmitEl?.click()
 
-      // TODO: get the question text
+    await this.page.waitForNavigation({
+      waitUntil: 'networkidle2',
+    })
 
-      await browser.close()
-    };
+    const questions = await this.page.$$('div[data-test="study-question"]')
+    if (!questions) return
+    const results = questions.map(async (result) => {
+      return await this.page.evaluate((el) => el.textContent, result)
+    })
+
+    return results
+  }
 }
