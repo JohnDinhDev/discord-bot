@@ -1,30 +1,53 @@
-import Discord, { TextChannel } from 'discord.js'
+import Discord, { TextChannel } from "discord.js";
+
+import puppeteer from "puppeteer";
 
 // Definitions
-import { Msg } from './definitions/interfaces/'
+import { Msg } from "./definitions/interfaces/";
 
 // Controllers
-import Commands from './controllers/Commands'
+import Commands from "./controllers/Commands";
+
+//Chegg
+import Chegg from "./controllers/Chegg";
 
 // Views
-require('dotenv').config()
+require("dotenv").config();
 
-const client = new Discord.Client()
+//---RUNS SOURCE CODE OF BOT---
+const Cheggie = async () => {
+    const client = new Discord.Client();
+    const browser = await puppeteer.launch({
+        headless: process.env.HEADLESS === "TRUE",
+    });
+    //get new page from browser
+    const page = await browser.newPage();
 
-client.on('ready', () => {
-  // Creates tables in database
-  console.log(`Logged in as ${client.user?.tag}`)
-})
+    const chegg = new Chegg(browser, page);
 
-client.on('message', async (msg: Msg) => {
-  // if message does not start with '!ht dev'
-  // if message is from the bot
-  if (!msg.content.startsWith(process.env.DISCORD_PREFIX! + 'dev') && msg.author.bot) { return }
+    client.on("ready", () => {
+        // Creates tables in database
+        console.log(`Logged in as ${client.user?.tag}`);
+    });
 
-  // Set UserId for Database Instance
+    client.on("message", async (msg: Msg) => {
+        // if message does not start with '!ht dev'
+        // if message is from the bot
+        if (
+            !msg.content.startsWith(process.env.DISCORD_PREFIX! + "dev") &&
+            msg.author.bot
+        ) {
+            return;
+        }
 
-  // Parses message content into a command and runs that command
-  new Commands(msg)
-})
+        // Set UserId for Database Instance
 
-client.login(process.env.DISCORD_TOKEN)
+        // Parses message content into a command and runs that command
+        new Commands(msg, chegg);
+    });
+
+    client.login(process.env.DISCORD_TOKEN);
+};
+
+//Run it
+Cheggie();
