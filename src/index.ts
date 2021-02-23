@@ -36,7 +36,7 @@ const Cheggie = async () => {
     // Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36
     headers['User-Agent'] =
       // This is a header for Chrome on Linux
-      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36'
+      process.env.USER_AGENT
     request.continue({ headers })
   })
 
