@@ -9,6 +9,7 @@ export default class Chegg {
     this.browser = browser
     this.page = page
   }
+
   static $ = async (
     page: Page,
     selectors: Array<string>

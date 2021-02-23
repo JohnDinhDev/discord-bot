@@ -1,3 +1,6 @@
+//Promise file system
+import fsPromise from 'fs/promises'
+
 // Definitions
 import { Msg, Keyable } from '../definitions/interfaces'
 
@@ -7,6 +10,7 @@ import Chegg from './Chegg'
 // Views
 import Message from '../views/Message'
 import Embed from '../views/Embed'
+import { Page } from 'puppeteer'
 
 export default class Commands {
   // TODO: make env type for prefix, and make tests for empty env config
@@ -50,6 +54,27 @@ export default class Commands {
     })
   }
 
+  //will save cookies from old session
+  private save_cookies = async () => {
+    const cookies = await this.chegg.page.cookies()
+    await fsPromise.writeFile(
+      './cookies.json',
+      JSON.stringify(cookies, null, 4)
+    )
+
+    this.msg.reply('cookies have been saved for this session!')
+  }
+
+  private static set_cookies = async (page: Page) => {
+    const cookiesString: any = await fsPromise.readFile('./cookies.json')
+    const cookies = JSON.parse(cookiesString)
+    await page.setCookie(...cookies)
+  }
+
+  private set_cookies = async () => {
+    await Commands.set_cookies(this.chegg.page)
+  }
+
   private help = async (): Promise<void> => {
     // If user input command is invalid
     if ((this.command || '') in this === false) {
@@ -63,3 +88,16 @@ export default class Commands {
     this.msg.send(embed)
   }
 }
+
+//Jaydinh's ~Pointers~
+
+// const myObj2 = {
+//   age: '21',
+//   smol_pp: 'negatory',
+// }
+
+// const me = {
+//   //this destructures myObj2 and returns all key-val pairs
+//   ...myObj2,
+//   smol_pp: true //overrides key-val pairfrom myObj2
+// }
