@@ -1,14 +1,14 @@
+//Puppeteer (scraper)
+import puppeteer from 'puppeteer'
 import { Browser, Page, ElementHandle } from 'puppeteer'
-
 export default class Chegg {
-  browser: Browser
-  page: Page
+  browser: any
+  page: any
 
-  constructor(browser: Browser, page: Page) {
+  constructor(browser: any, page: any) {
     this.browser = browser
     this.page = page
   }
-
   static $ = async (
     page: Page,
     selectors: Array<string>
@@ -55,16 +55,34 @@ export default class Chegg {
     await searchBarEl?.type(searchStr, { delay: 100 })
     await searchSubmitEl?.click()
 
+    //Wait for page to load BEOFRE QUERYING
     await this.page.waitForNavigation({
       waitUntil: 'networkidle2',
     })
 
-    const questions = await this.page.$$('div[data-test="study-question"]')
-    if (!questions) return
-    const results = questions.map(async (result) => {
-      return await this.page.evaluate((el) => el.textContent, result)
+    //locates data under 'div' header from page
+    const questions: Array<ElementHandle> = await this.page.$$(
+      'div[data-test="study-question"]'
+    )
+    const answers: Array<ElementHandle> = await this.page.$$(
+      'a[data-test="study-link"]'
+    )
+
+    if (!questions || !answers) return //TODO: Add error handling code
+    const q_results = questions.map(async (question: any) => {
+      return await this.page.evaluate((el: any) => el.textContent, question)
     })
 
-    return results
+    const a_results = answers.map(async (answer: any) => {
+      return await this.page.evaluate(
+        (el: Element) => el.getAttribute('href'),
+        answer
+      )
+    })
+
+    for (let a of a_results) {
+      console.log(await a)
+    }
+    return q_results
   }
 }

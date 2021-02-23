@@ -1,10 +1,10 @@
 {
-  "name": "hell-tower",
+  "name": "Cheggie",
   "version": "1.0.0",
-  "description": "Text Based RPG",
+  "description": "Your Neighborhood Chegg Discord Bot",
   "main": "./dist/index.js",
   "repository": "git@github.com:JohnDinhTech/hell-tower.git",
-  "author": "John Dinh",
+  "author": "John Dinh & Aaron Feinberg",
   "scripts": {
     "dev": "tsc -w & nodemon -q -w dist ./dist/index.js",
     "start": "tsc & node dist/index.js"
