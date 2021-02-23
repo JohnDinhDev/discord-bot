@@ -1,16 +1,17 @@
 {
-  "name": "hell-tower",
+  "name": "Cheggie",
   "version": "1.0.0",
-  "description": "Text Based RPG",
+  "description": "Your Neighborhood Chegg Discord Bot",
   "main": "./dist/index.js",
   "repository": "git@github.com:JohnDinhTech/hell-tower.git",
-  "author": "John Dinh",
+  "author": "John Dinh & Aaron Feinberg",
   "scripts": {
     "dev": "tsc -w & nodemon -q -w dist ./dist/index.js",
     "start": "tsc & node dist/index.js"
   },
   "dependencies": {
-    "discord.js": "^12.4.1"
+    "discord.js": "^12.4.1",
+    "puppeteer": "^7.1.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.31",
@@ -23,10 +24,12 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "nodemon": "^2.0.6",
+    "ts-loader": "^8.0.17",
     "typescript": "^4.1.3"
   },
   "prettier": {
-    "tabWidth": 4,
-    "singleQuote": false
+    "tabWidth": 2,
+    "singleQuote": true,
+    "semi": false
   }
 }
