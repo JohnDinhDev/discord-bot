@@ -40,6 +40,10 @@ export default class Commands {
     }
   }
 
+  private smallpp = async () => {
+    this.msg.reply('has a small pp')
+  }
+
   // -c search your string here
   private search = async () => {
     const searchStr = this.args.join(' ')
@@ -49,8 +53,25 @@ export default class Commands {
 
     // Run the Chegg.search method, located in src/controllers/Chegg.ts
     const questions = (await this.chegg.search(searchStr)) || []
-    questions.forEach(async (question) => {
-      this.msg.send(`Question: \n\`\`\`${await question}\n\`\`\``)
+    questions.forEach(async (question, index) => {
+      //this.msg.send(`Question: \n\`\`\`${await question}\n\`\`\``)
+      let questionString = await question
+      questionString = questionString.substr(2)
+      questionString = questionString.split(' ')
+      questionString = questionString.reduce(
+        (reducedStr: string, currentVal: string, index: number) => {
+          return (
+            reducedStr +
+            `${index % 10 === 0 ? `\n${currentVal}` : ` ${currentVal}`}`
+          )
+        }
+      )
+      const questionEmbed = Embed.generic(
+        0xfdbb46,
+        `Question ${index + 1}`,
+        questionString
+      )
+      this.msg.send(questionEmbed)
     })
   }
 

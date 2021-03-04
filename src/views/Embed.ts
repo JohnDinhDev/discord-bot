@@ -4,7 +4,7 @@ import { Keyable } from '../definitions/interfaces'
 import { generateLineBreaks } from '../utils'
 export default class Embed {
     public static generic = (
-      color: string,
+      color: string | number,
       title: string,
       description: string
     ) => {

@@ -53,7 +53,7 @@ export default class Chegg {
     const searchSubmitEl = await this.$(searchSubmitElSelectors)
 
     await this.clearInputEl(searchBarEl!)
-    await searchBarEl?.type(searchStr, { delay: 100 })
+    await searchBarEl?.type(searchStr, { delay: 5 })
     await searchSubmitEl?.click()
 
     //Wait for page to load BEOFRE QUERYING
